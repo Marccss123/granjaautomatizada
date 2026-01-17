@@ -1,6 +1,6 @@
 package com.granja.interfaz;
 
-import com.granja.controlador.GranjaController;
+import com.granja.controlador.GranjaControlador;
 import com.granja.modelo.*;
 import com.granja.utilitario.GranjaException;
 import com.vaadin.flow.component.button.Button;
@@ -23,12 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("")
 public class VistaPrincipal extends VerticalLayout {
-    private final GranjaController controller;
+    private final GranjaControlador controller;
     private VerticalLayout contentLayout;
     private HorizontalLayout userBar;
 
     @Autowired
-    public VistaPrincipal(GranjaController controller) {
+    public VistaPrincipal(GranjaControlador controller) {
         this.controller = controller;
 
         setSizeFull();

@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 @Component // Marca la clase como un componente gestionado por Spring
-public class GranjaController { // Controlador principal que maneja las operaciones de la granja
+public class GranjaControlador { // Controlador principal que maneja las operaciones de la granja
     private final GestorGranja gestorGranja;
     private final PersistenciaService persistenciaService;
 
     @Autowired // Inyección de dependencias a través del constructor
-    public GranjaController(GestorGranja gestorGranja, PersistenciaService persistenciaService) {
+    public GranjaControlador(GestorGranja gestorGranja, PersistenciaService persistenciaService) {
         this.gestorGranja = gestorGranja;
         this.persistenciaService = persistenciaService;
         gestorGranja.setPersistenciaService(persistenciaService);
