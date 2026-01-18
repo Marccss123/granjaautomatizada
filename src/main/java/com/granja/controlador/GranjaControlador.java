@@ -18,13 +18,14 @@ public class GranjaControlador { // Controlador principal que maneja las operaci
         this.gestorGranja = gestorGranja;
         this.persistenciaService = persistenciaService;
         gestorGranja.setPersistenciaService(persistenciaService);
-        inicializarSistema();
+        //inicializarSistema();
     }
 
-    private void inicializarSistema() {
+
+  /*  private void inicializarSistema() {
         gestorGranja.getGestorAspersores().agregarAspersoresInventario(10);
         gestorGranja.getGestorSensores().agregarSensoresInventario(10);
-    }
+    }*/
 
     public ArrayList<Usuario> obtenerUsuarios() {
         return gestorGranja.getGestorUsuarios().getUsuarios();

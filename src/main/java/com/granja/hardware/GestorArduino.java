@@ -67,7 +67,9 @@ public class GestorArduino {
         if (connector.conectar(puerto)) {
             conexionesActivas.put(idSensor, connector);
             sensor.setConectado(true);
+            connector.encenderLED();
             System.out.println("Sensor registrado: " + idSensor + " en puerto " + puerto);
+            System.out.println("LED encendido - Sensor conectado");
             return true;
         }
 
@@ -92,7 +94,9 @@ public class GestorArduino {
         if (connector.conectar(puerto)) {
             conexionesActivas.put(idAspersor, connector);
             aspersor.setConectado(true);
+            connector.encenderLED();
             System.out.println("Aspersor registrado: " + idAspersor + " en puerto " + puerto);
+            System.out.println("LED encendido - Aspersor conectado");
             return true;
         }
 
@@ -151,11 +155,13 @@ public class GestorArduino {
 
     public void desconectarTodos() {
         for (ArduinoConnector connector : conexionesActivas.values()) {
+            connector.apagarLED();
             connector.desconectar();
         }
         conexionesActivas.clear();
         dispositivosPorPuerto.clear();
         System.out.println("Todas las conexiones Arduino cerradas");
+        System.out.println("Todos los LEDs apagados");
     }
 
     public List<String> obtenerDispositivosConectados() {

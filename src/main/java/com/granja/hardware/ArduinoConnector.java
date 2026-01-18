@@ -4,7 +4,6 @@ import com.fazecast.jSerialComm.SerialPort;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ArduinoConnector {
     private SerialPort serialPort;
@@ -80,7 +79,7 @@ public class ArduinoConnector {
             enviarComando("GET_HUMIDITY");
             Thread.sleep(500);
             String respuesta = leerRespuesta();
-            return Integer.parseInt(Objects.requireNonNull(respuesta).trim());
+            return Integer.parseInt(respuesta.trim());
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
@@ -116,6 +115,53 @@ public class ArduinoConnector {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public boolean encenderLED() {
+        if (!conectado || serialPort == null) {
+            return false;
+        }
+
+        try {
+            enviarComando("CONNECT");
+            Thread.sleep(500);
+            String respuesta = leerRespuesta();
+            return respuesta != null && respuesta.contains("CONNECTED");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean apagarLED() {
+        if (!conectado || serialPort == null) {
+            return false;
+        }
+
+        try {
+            enviarComando("DISCONNECT");
+            Thread.sleep(500);
+            String respuesta = leerRespuesta();
+            return respuesta != null && respuesta.contains("DISCONNECTED");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String obtenerEstadoLED() {
+        if (!conectado || serialPort == null) {
+            return "DISCONNECTED";
+        }
+
+        try {
+            enviarComando("GET_CONNECTION_STATUS");
+            Thread.sleep(500);
+            return leerRespuesta();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR";
         }
     }
 
