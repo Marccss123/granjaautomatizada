@@ -50,9 +50,6 @@ public class VentanaComandos implements CommandLineRunner {
 
     private void inicializarSistema() {
         gestorGranja.setPersistenciaService(persistenciaService);
-        gestorGranja.getGestorAspersores().agregarAspersoresInventario(10);
-        gestorGranja.getGestorSensores().agregarSensoresInventario(10);
-        System.out.println("Sistema inicializado con 10 aspersores y 10 sensores en inventario.");
     }
 
     private void ejecutarMenuPrincipal() {
