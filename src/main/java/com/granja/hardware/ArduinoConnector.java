@@ -61,9 +61,28 @@ public class ArduinoConnector {
         }
 
         try {
+            Thread.sleep(1000);
+
+            while (serialPort.bytesAvailable() > 0) {
+                byte[] buffer = new byte[serialPort.bytesAvailable()];
+                serialPort.readBytes(buffer, buffer.length);
+            }
+
             enviarComando("GET_NAME");
-            Thread.sleep(500);
-            return leerRespuesta();
+            Thread.sleep(1000);
+
+            String respuesta = leerRespuesta();
+
+            if (respuesta != null && !respuesta.isEmpty()) {
+                respuesta = respuesta.replaceAll("[^A-Za-z0-9_-]", "");
+                respuesta = respuesta.trim();
+
+                if (respuesta.length() > 50) {
+                    respuesta = respuesta.substring(0, 50);
+                }
+            }
+
+            return respuesta;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
