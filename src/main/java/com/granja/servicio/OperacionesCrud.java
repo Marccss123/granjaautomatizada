@@ -30,7 +30,7 @@ public class OperacionesCrud {
     private final HistorialEncendidoRepositorio historialRepository;
 
 
-    public boolean findByEmailActive(String email) {
+    public boolean buscarPorEmailActivo(String email) {
         Optional<UsuarioEntidad> usuario = usuarioRepositorio.findByEmail(email);
         return usuario.map(UsuarioEntidad::isActivo).orElse(false);
     }

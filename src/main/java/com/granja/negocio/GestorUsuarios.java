@@ -56,7 +56,7 @@ public class GestorUsuarios {
         Usuario usuario = new Usuario(id, nombre, apellido, email, telefono, rol);
         if (operacionesCrud != null) {
             try {
-                if(!operacionesCrud.findByEmailActive(email)) {
+                if(!operacionesCrud.buscarPorEmailActivo(email)) {
                     operacionesCrud.guardarUsuario(usuario);
                     System.out.println("Usuario guardado en BD: " + usuario.getNombreCompleto());
                     usuarios.add(usuario);
