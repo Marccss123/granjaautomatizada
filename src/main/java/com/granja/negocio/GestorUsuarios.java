@@ -1,7 +1,7 @@
 package com.granja.negocio;
 
 import com.granja.modelo.Usuario;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.GranjaException;
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ public class GestorUsuarios {
     private ArrayList<Usuario> usuarios;
     private Usuario usuarioActual;
     private int contadorUsuarios;
-    private PersistenciaService persistenciaService;
+    private OperacionesCrud operacionesCrud;
 
     public GestorUsuarios(GestorGranja gestorGranja) {
         this.gestorGranja = gestorGranja;
@@ -25,15 +25,15 @@ public class GestorUsuarios {
         this.contadorUsuarios = 1;
     }
 
-    public void setPersistenciaService(PersistenciaService persistenciaService) {
-        this.persistenciaService = persistenciaService;
+    public void setPersistenciaService(OperacionesCrud operacionesCrud) {
+        this.operacionesCrud = operacionesCrud;
         cargarUsuariosDesdeDB();
     }
 
     private void cargarUsuariosDesdeDB() {
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                usuarios = (ArrayList<Usuario>) persistenciaService.cargarUsuarios();
+                usuarios = (ArrayList<Usuario>) operacionesCrud.cargarUsuarios();
                 if (!usuarios.isEmpty()) {
                     contadorUsuarios = usuarios.size() + 1;
                     return;
@@ -57,9 +57,9 @@ public class GestorUsuarios {
         usuarios.add(usuario);
         contadorUsuarios++;
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.guardarUsuario(usuario);
+                operacionesCrud.guardarUsuario(usuario);
                 System.out.println("Usuario guardado en BD: " + usuario.getNombreCompleto());
             } catch (Exception e) {
                 System.out.println("Error guardando usuario en BD: " + e.getMessage());

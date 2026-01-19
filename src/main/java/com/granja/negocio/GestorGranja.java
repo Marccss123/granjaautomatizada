@@ -2,7 +2,7 @@ package com.granja.negocio;
 
 import com.granja.modelo.*;
 import com.granja.hardware.GestorArduino;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class GestorGranja {
     private GestorUsuarios gestorUsuarios;
     private int contadorIdAspersores;
     private int contadorIdSensores;
-    private PersistenciaService persistenciaService;
+    private OperacionesCrud operacionesCrud;
 
     public GestorGranja() {
         this.parcelas = new ArrayList<>();
@@ -38,19 +38,19 @@ public class GestorGranja {
     }
 
     @Autowired(required = false)
-    public void setPersistenciaService(PersistenciaService persistenciaService) {
-        this.persistenciaService = persistenciaService;
-        if (persistenciaService != null) {
-            gestorUsuarios.setPersistenciaService(persistenciaService);
-            gestorParcelas.setPersistenciaService(persistenciaService);
-            gestorAspersores.setPersistenciaService(persistenciaService);
-            gestorSensores.setPersistenciaService(persistenciaService);
-            gestorCultivos.setPersistenciaService(persistenciaService);
+    public void setPersistenciaService(OperacionesCrud operacionesCrud) {
+        this.operacionesCrud = operacionesCrud;
+        if (operacionesCrud != null) {
+            gestorUsuarios.setPersistenciaService(operacionesCrud);
+            gestorParcelas.setPersistenciaService(operacionesCrud);
+            gestorAspersores.setPersistenciaService(operacionesCrud);
+            gestorSensores.setPersistenciaService(operacionesCrud);
+            gestorCultivos.setPersistenciaService(operacionesCrud);
         }
     }
 
-    public PersistenciaService getPersistenciaService() {
-        return persistenciaService;
+    public OperacionesCrud getPersistenciaService() {
+        return operacionesCrud;
     }
 
     public ArrayList<Parcela> getParcelas() {

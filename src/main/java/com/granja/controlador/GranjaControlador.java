@@ -2,7 +2,7 @@ package com.granja.controlador;
 
 import com.granja.modelo.*;
 import com.granja.negocio.*;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.GranjaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,13 +11,13 @@ import java.util.ArrayList;
 @Component
 public class GranjaControlador {
     private final GestorGranja gestorGranja;
-    private final PersistenciaService persistenciaService;
+    private final OperacionesCrud operacionesCrud;
 
     @Autowired
-    public GranjaControlador(GestorGranja gestorGranja, PersistenciaService persistenciaService) {
+    public GranjaControlador(GestorGranja gestorGranja, OperacionesCrud operacionesCrud) {
         this.gestorGranja = gestorGranja;
-        this.persistenciaService = persistenciaService;
-        gestorGranja.setPersistenciaService(persistenciaService);
+        this.operacionesCrud = operacionesCrud;
+        gestorGranja.setPersistenciaService(operacionesCrud);
     }
 
     public ArrayList<Usuario> obtenerUsuarios() {

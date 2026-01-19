@@ -1,21 +1,21 @@
 package com.granja.negocio;
 
 import com.granja.modelo.*;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.*;
 
 public class GestorParcelas {
     private GestorGranja gestorGranja;
     private int contadorParcelas;
-    private PersistenciaService persistenciaService;
+    private OperacionesCrud operacionesCrud;
 
     public GestorParcelas(GestorGranja gestorGranja) {
         this.gestorGranja = gestorGranja;
         this.contadorParcelas = 1;
     }
 
-    public void setPersistenciaService(PersistenciaService persistenciaService) {
-        this.persistenciaService = persistenciaService;
+    public void setPersistenciaService(OperacionesCrud operacionesCrud) {
+        this.operacionesCrud = operacionesCrud;
     }
 
     public void crearParcelas(double terrenoTotal) throws GranjaException {
@@ -38,9 +38,9 @@ public class GestorParcelas {
             parcela.setUsuarioCreador(usuarioActual);
             gestorGranja.getParcelas().add(parcela);
 
-            if (persistenciaService != null) {
+            if (operacionesCrud != null) {
                 try {
-                    persistenciaService.guardarParcela(parcela, usuarioActual);
+                    operacionesCrud.guardarParcela(parcela, usuarioActual);
                 } catch (Exception e) {
                     System.out.println("Error guardando parcela en BD: " + e.getMessage());
                 }
@@ -55,9 +55,9 @@ public class GestorParcelas {
             parcela.setUsuarioCreador(usuarioActual);
             gestorGranja.getParcelas().add(parcela);
 
-            if (persistenciaService != null) {
+            if (operacionesCrud != null) {
                 try {
-                    persistenciaService.guardarParcela(parcela, usuarioActual);
+                    operacionesCrud.guardarParcela(parcela, usuarioActual);
                 } catch (Exception e) {
                     System.out.println("Error guardando parcela en BD: " + e.getMessage());
                 }
@@ -122,9 +122,9 @@ public class GestorParcelas {
 
         gestorGranja.getParcelas().remove(parcela);
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.eliminarParcela(idParcela);
+                operacionesCrud.eliminarParcela(idParcela);
             } catch (Exception e) {
                 System.out.println("Error eliminando parcela de BD: " + e.getMessage());
             }

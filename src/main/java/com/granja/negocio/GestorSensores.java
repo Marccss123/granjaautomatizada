@@ -1,21 +1,21 @@
 package com.granja.negocio;
 
 import com.granja.modelo.*;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.*;
-import java.time.LocalDateTime;
+
 import java.time.format.DateTimeFormatter;
 
 public class GestorSensores {
     private GestorGranja gestorGranja;
-    private PersistenciaService persistenciaService;
+    private OperacionesCrud operacionesCrud;
 
     public GestorSensores(GestorGranja gestorGranja) {
         this.gestorGranja = gestorGranja;
     }
 
-    public void setPersistenciaService(PersistenciaService persistenciaService) {
-        this.persistenciaService = persistenciaService;
+    public void setPersistenciaService(OperacionesCrud operacionesCrud) {
+        this.operacionesCrud = operacionesCrud;
     }
 
     public void agregarSensoresInventario(int cantidad) {
@@ -24,9 +24,9 @@ public class GestorSensores {
             SensorHumedad sensor = new SensorHumedad(id);
             gestorGranja.getSensoresInventario().add(sensor);
 
-            if (persistenciaService != null) {
+            if (operacionesCrud != null) {
                 try {
-                    persistenciaService.guardarSensor(sensor);
+                    operacionesCrud.guardarSensor(sensor);
                 } catch (Exception e) {
                     System.out.println("Error guardando sensor en BD: " + e.getMessage());
                 }
@@ -74,9 +74,9 @@ public class GestorSensores {
         parcela.agregarSensor(sensor);
         gestorGranja.getSensoresInventario().remove(sensor);
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.guardarSensor(sensor);
+                operacionesCrud.guardarSensor(sensor);
             } catch (Exception e) {
                 System.out.println("Error actualizando sensor en BD: " + e.getMessage());
             }
@@ -104,9 +104,9 @@ public class GestorSensores {
         parcela.agregarSensor(sensor);
         gestorGranja.getSensoresInventario().remove(sensor);
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.guardarSensor(sensor);
+                operacionesCrud.guardarSensor(sensor);
             } catch (Exception e) {
                 System.out.println("Error actualizando sensor en BD: " + e.getMessage());
             }
@@ -124,9 +124,9 @@ public class GestorSensores {
 
         sensor.setConectado(!sensor.isConectado());
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.guardarSensor(sensor);
+                operacionesCrud.guardarSensor(sensor);
             } catch (Exception e) {
                 System.out.println("Error actualizando sensor en BD: " + e.getMessage());
             }
@@ -164,11 +164,11 @@ public class GestorSensores {
                     sensor.setHumedadActual(nuevaHumedad);
                     sensor.realizarLectura();
 
-                    if (persistenciaService != null) {
+                    if (operacionesCrud != null) {
                         try {
-                            persistenciaService.guardarSensor(sensor);
+                            operacionesCrud.guardarSensor(sensor);
                             LecturaHumedad ultimaLectura = sensor.getLecturas().get(sensor.getLecturas().size() - 1);
-                            persistenciaService.guardarLecturaHumedad(sensor.getId(), ultimaLectura);
+                            operacionesCrud.guardarLecturaHumedad(sensor.getId(), ultimaLectura);
                         } catch (Exception e) {
                             System.out.println("Error guardando lectura en BD: " + e.getMessage());
                         }
@@ -216,9 +216,9 @@ public class GestorSensores {
 
         gestorGranja.getSensoresInventario().remove(sensor);
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.eliminarSensor(idSensor);
+                operacionesCrud.eliminarSensor(idSensor);
             } catch (Exception e) {
                 System.out.println("Error eliminando sensor de BD: " + e.getMessage());
             }

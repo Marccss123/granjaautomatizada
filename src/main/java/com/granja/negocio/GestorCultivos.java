@@ -1,14 +1,14 @@
 package com.granja.negocio;
 
 import com.granja.modelo.*;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.GranjaException;
 import java.util.ArrayList;
 
 public class GestorCultivos {
     private GestorGranja gestorGranja;
     private ArrayList<Cultivo> cultivosDisponibles;
-    private PersistenciaService persistenciaService;
+    private OperacionesCrud operacionesCrud;
 
     public GestorCultivos(GestorGranja gestorGranja) {
         this.gestorGranja = gestorGranja;
@@ -16,8 +16,8 @@ public class GestorCultivos {
         inicializarCultivos();
     }
 
-    public void setPersistenciaService(PersistenciaService persistenciaService) {
-        this.persistenciaService = persistenciaService;
+    public void setPersistenciaService(OperacionesCrud operacionesCrud) {
+        this.operacionesCrud = operacionesCrud;
     }
 
     private void inicializarCultivos() {
@@ -57,9 +57,9 @@ public class GestorCultivos {
 
         parcela.setCultivo(cultivo);
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.actualizarCultivoParcela(idParcela, nombreCultivo);
+                operacionesCrud.actualizarCultivoParcela(idParcela, nombreCultivo);
             } catch (Exception e) {
                 System.out.println("Error actualizando cultivo en BD: " + e.getMessage());
             }
@@ -82,9 +82,9 @@ public class GestorCultivos {
 
         parcela.setCultivo(cultivo);
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.actualizarCultivoParcela(idParcela, nombreCultivo);
+                operacionesCrud.actualizarCultivoParcela(idParcela, nombreCultivo);
             } catch (Exception e) {
                 System.out.println("Error actualizando cultivo en BD: " + e.getMessage());
             }

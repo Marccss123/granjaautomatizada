@@ -1,21 +1,21 @@
 package com.granja.negocio;
 
 import com.granja.modelo.*;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class GestorAspersores {
     private GestorGranja gestorGranja;
-    private PersistenciaService persistenciaService;
+    private OperacionesCrud operacionesCrud;
 
     public GestorAspersores(GestorGranja gestorGranja) {
         this.gestorGranja = gestorGranja;
     }
 
-    public void setPersistenciaService(PersistenciaService persistenciaService) {
-        this.persistenciaService = persistenciaService;
+    public void setPersistenciaService(OperacionesCrud operacionesCrud) {
+        this.operacionesCrud = operacionesCrud;
     }
 
     public void agregarAspersoresInventario(int cantidad) {
@@ -24,9 +24,9 @@ public class GestorAspersores {
             Aspersor aspersor = new Aspersor(id);
             gestorGranja.getAspersoresInventario().add(aspersor);
 
-            if (persistenciaService != null) {
+            if (operacionesCrud != null) {
                 try {
-                    persistenciaService.guardarAspersor(aspersor);
+                    operacionesCrud.guardarAspersor(aspersor);
                 } catch (Exception e) {
                     System.out.println("Error guardando aspersor en BD: " + e.getMessage());
                 }
@@ -74,9 +74,9 @@ public class GestorAspersores {
         parcela.agregarAspersor(aspersor);
         gestorGranja.getAspersoresInventario().remove(aspersor);
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.guardarAspersor(aspersor);
+                operacionesCrud.guardarAspersor(aspersor);
             } catch (Exception e) {
                 System.out.println("Error actualizando aspersor en BD: " + e.getMessage());
             }
@@ -104,9 +104,9 @@ public class GestorAspersores {
         parcela.agregarAspersor(aspersor);
         gestorGranja.getAspersoresInventario().remove(aspersor);
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.guardarAspersor(aspersor);
+                operacionesCrud.guardarAspersor(aspersor);
             } catch (Exception e) {
                 System.out.println("Error actualizando aspersor en BD: " + e.getMessage());
             }
@@ -136,10 +136,10 @@ public class GestorAspersores {
             if (exito) {
                 aspersor.encender();
 
-                if (persistenciaService != null) {
+                if (operacionesCrud != null) {
                     try {
-                        persistenciaService.guardarAspersor(aspersor);
-                        persistenciaService.guardarHistorialEncendido(idAspersor, LocalDateTime.now());
+                        operacionesCrud.guardarAspersor(aspersor);
+                        operacionesCrud.guardarHistorialEncendido(idAspersor, LocalDateTime.now());
                     } catch (Exception e) {
                         System.out.println("Error guardando estado en BD: " + e.getMessage());
                     }
@@ -152,10 +152,10 @@ public class GestorAspersores {
         } else {
             aspersor.encender();
 
-            if (persistenciaService != null) {
+            if (operacionesCrud != null) {
                 try {
-                    persistenciaService.guardarAspersor(aspersor);
-                    persistenciaService.guardarHistorialEncendido(idAspersor, LocalDateTime.now());
+                    operacionesCrud.guardarAspersor(aspersor);
+                    operacionesCrud.guardarHistorialEncendido(idAspersor, LocalDateTime.now());
                 } catch (Exception e) {
                     System.out.println("Error guardando estado en BD: " + e.getMessage());
                 }
@@ -200,10 +200,10 @@ public class GestorAspersores {
                             if (exito) {
                                 aspersor.encender();
 
-                                if (persistenciaService != null) {
+                                if (operacionesCrud != null) {
                                     try {
-                                        persistenciaService.guardarAspersor(aspersor);
-                                        persistenciaService.guardarHistorialEncendido(aspersor.getId(), LocalDateTime.now());
+                                        operacionesCrud.guardarAspersor(aspersor);
+                                        operacionesCrud.guardarHistorialEncendido(aspersor.getId(), LocalDateTime.now());
                                     } catch (Exception e) {
                                         System.out.println("Error guardando en BD: " + e.getMessage());
                                     }
@@ -215,10 +215,10 @@ public class GestorAspersores {
                         } else {
                             aspersor.encender();
 
-                            if (persistenciaService != null) {
+                            if (operacionesCrud != null) {
                                 try {
-                                    persistenciaService.guardarAspersor(aspersor);
-                                    persistenciaService.guardarHistorialEncendido(aspersor.getId(), LocalDateTime.now());
+                                    operacionesCrud.guardarAspersor(aspersor);
+                                    operacionesCrud.guardarHistorialEncendido(aspersor.getId(), LocalDateTime.now());
                                 } catch (Exception e) {
                                     System.out.println("Error guardando en BD: " + e.getMessage());
                                 }
@@ -237,9 +237,9 @@ public class GestorAspersores {
                             if (exito) {
                                 aspersor.apagar();
 
-                                if (persistenciaService != null) {
+                                if (operacionesCrud != null) {
                                     try {
-                                        persistenciaService.guardarAspersor(aspersor);
+                                        operacionesCrud.guardarAspersor(aspersor);
                                     } catch (Exception e) {
                                         System.out.println("Error guardando en BD: " + e.getMessage());
                                     }
@@ -251,9 +251,9 @@ public class GestorAspersores {
                         } else {
                             aspersor.apagar();
 
-                            if (persistenciaService != null) {
+                            if (operacionesCrud != null) {
                                 try {
-                                    persistenciaService.guardarAspersor(aspersor);
+                                    operacionesCrud.guardarAspersor(aspersor);
                                 } catch (Exception e) {
                                     System.out.println("Error guardando en BD: " + e.getMessage());
                                 }
@@ -281,9 +281,9 @@ public class GestorAspersores {
 
         aspersor.setConectado(!aspersor.isConectado());
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.guardarAspersor(aspersor);
+                operacionesCrud.guardarAspersor(aspersor);
             } catch (Exception e) {
                 System.out.println("Error actualizando aspersor en BD: " + e.getMessage());
             }
@@ -324,9 +324,9 @@ public class GestorAspersores {
 
         gestorGranja.getAspersoresInventario().remove(aspersor);
 
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.eliminarAspersor(idAspersor);
+                operacionesCrud.eliminarAspersor(idAspersor);
             } catch (Exception e) {
                 System.out.println("Error eliminando aspersor de BD: " + e.getMessage());
             }
