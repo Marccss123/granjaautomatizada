@@ -85,6 +85,36 @@ public class GestorSensores {
         System.out.println("Sensor " + sensor.getId() + " asignado a parcela " + idParcela);
     }
 
+    public void asignarSensorEspecificoAParcela(String idSensor, String idParcela) throws GranjaException {
+        Parcela parcela = gestorGranja.getGestorParcelas().buscarParcela(idParcela);
+        if (parcela == null) {
+            throw new GranjaException("Parcela no encontrada: " + idParcela);
+        }
+
+        SensorHumedad sensor = buscarSensor(idSensor);
+        if (sensor == null) {
+            throw new GranjaException("Sensor no encontrado: " + idSensor);
+        }
+
+        if (sensor.getParcela() != null) {
+            throw new GranjaException("El sensor ya está asignado a la parcela " + sensor.getParcela().getId());
+        }
+
+        sensor.setParcela(parcela);
+        parcela.agregarSensor(sensor);
+        gestorGranja.getSensoresInventario().remove(sensor);
+
+        if (persistenciaService != null) {
+            try {
+                persistenciaService.guardarSensor(sensor);
+            } catch (Exception e) {
+                System.out.println("Error actualizando sensor en BD: " + e.getMessage());
+            }
+        }
+
+        System.out.println("Sensor " + idSensor + " asignado específicamente a parcela " + idParcela);
+    }
+
     public void conectarDesconectarSensor(String idSensor) throws GranjaException {
         SensorHumedad sensor = buscarSensor(idSensor);
 

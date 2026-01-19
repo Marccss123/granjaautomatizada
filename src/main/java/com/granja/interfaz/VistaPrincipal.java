@@ -265,19 +265,40 @@ public class VistaPrincipal extends VerticalLayout {
         });
         agregarButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        TextField parcelaField = new TextField("ID Parcela");
+        ComboBox<Aspersor> aspersorCombo = new ComboBox<>("Seleccionar Aspersor");
+        aspersorCombo.setItems(controller.obtenerAspersoresInventario());
+        aspersorCombo.setItemLabelGenerator(Aspersor::getId);
+        aspersorCombo.setPlaceholder("Elegir aspersor...");
+        aspersorCombo.setWidth("200px");
+
+        ComboBox<Parcela> parcelaCombo = new ComboBox<>("Seleccionar Parcela");
+        parcelaCombo.setItems(controller.obtenerParcelas());
+        parcelaCombo.setItemLabelGenerator(Parcela::getId);
+        parcelaCombo.setPlaceholder("Elegir parcela...");
+        parcelaCombo.setWidth("200px");
+
         Button asignarButton = new Button("Asignar a Parcela", e -> {
             try {
-                controller.asignarAspersorAParcela(parcelaField.getValue());
-                mostrarNotificacion("Aspersor asignado", NotificationVariant.LUMO_SUCCESS);
-                actualizarGridAspersores();
+                if (aspersorCombo.getValue() != null && parcelaCombo.getValue() != null) {
+                    controller.asignarAspersorEspecificoAParcela(
+                            aspersorCombo.getValue().getId(),
+                            parcelaCombo.getValue().getId()
+                    );
+                    mostrarNotificacion("Aspersor asignado exitosamente", NotificationVariant.LUMO_SUCCESS);
+                    aspersorCombo.clear();
+                    parcelaCombo.clear();
+                    actualizarGridAspersores();
+                } else {
+                    mostrarNotificacion("Debe seleccionar un aspersor y una parcela", NotificationVariant.LUMO_ERROR);
+                }
             } catch (GranjaException ex) {
                 mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
             }
         });
+        asignarButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
 
         HorizontalLayout formLayout1 = new HorizontalLayout(cantidadField, agregarButton);
-        HorizontalLayout formLayout2 = new HorizontalLayout(parcelaField, asignarButton);
+        HorizontalLayout formLayout2 = new HorizontalLayout(aspersorCombo, parcelaCombo, asignarButton);
         formLayout1.setAlignItems(Alignment.BASELINE);
         formLayout2.setAlignItems(Alignment.BASELINE);
 
@@ -348,19 +369,40 @@ public class VistaPrincipal extends VerticalLayout {
         });
         agregarButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        TextField parcelaField = new TextField("ID Parcela");
+        ComboBox<SensorHumedad> sensorCombo = new ComboBox<>("Seleccionar Sensor");
+        sensorCombo.setItems(controller.obtenerSensoresInventario());
+        sensorCombo.setItemLabelGenerator(SensorHumedad::getId);
+        sensorCombo.setPlaceholder("Elegir sensor...");
+        sensorCombo.setWidth("200px");
+
+        ComboBox<Parcela> parcelaCombo = new ComboBox<>("Seleccionar Parcela");
+        parcelaCombo.setItems(controller.obtenerParcelas());
+        parcelaCombo.setItemLabelGenerator(Parcela::getId);
+        parcelaCombo.setPlaceholder("Elegir parcela...");
+        parcelaCombo.setWidth("200px");
+
         Button asignarButton = new Button("Asignar a Parcela", e -> {
             try {
-                controller.asignarSensorAParcela(parcelaField.getValue());
-                mostrarNotificacion("Sensor asignado", NotificationVariant.LUMO_SUCCESS);
-                actualizarGridSensores();
+                if (sensorCombo.getValue() != null && parcelaCombo.getValue() != null) {
+                    controller.asignarSensorEspecificoAParcela(
+                            sensorCombo.getValue().getId(),
+                            parcelaCombo.getValue().getId()
+                    );
+                    mostrarNotificacion("Sensor asignado exitosamente", NotificationVariant.LUMO_SUCCESS);
+                    sensorCombo.clear();
+                    parcelaCombo.clear();
+                    actualizarGridSensores();
+                } else {
+                    mostrarNotificacion("Debe seleccionar un sensor y una parcela", NotificationVariant.LUMO_ERROR);
+                }
             } catch (GranjaException ex) {
                 mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
             }
         });
+        asignarButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
 
         HorizontalLayout formLayout1 = new HorizontalLayout(cantidadField, agregarButton);
-        HorizontalLayout formLayout2 = new HorizontalLayout(parcelaField, asignarButton);
+        HorizontalLayout formLayout2 = new HorizontalLayout(sensorCombo, parcelaCombo, asignarButton);
         formLayout1.setAlignItems(Alignment.BASELINE);
         formLayout2.setAlignItems(Alignment.BASELINE);
 

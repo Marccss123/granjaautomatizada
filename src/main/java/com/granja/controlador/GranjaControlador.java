@@ -8,24 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
-@Component // Marca la clase como un componente gestionado por Spring
-public class GranjaControlador { // Controlador principal que maneja las operaciones de la granja
+@Component
+public class GranjaControlador {
     private final GestorGranja gestorGranja;
     private final PersistenciaService persistenciaService;
 
-    @Autowired // Inyección de dependencias a través del constructor
+    @Autowired
     public GranjaControlador(GestorGranja gestorGranja, PersistenciaService persistenciaService) {
         this.gestorGranja = gestorGranja;
         this.persistenciaService = persistenciaService;
         gestorGranja.setPersistenciaService(persistenciaService);
-        //inicializarSistema();
     }
-
-
-  /*  private void inicializarSistema() {
-        gestorGranja.getGestorAspersores().agregarAspersoresInventario(10);
-        gestorGranja.getGestorSensores().agregarSensoresInventario(10);
-    }*/
 
     public ArrayList<Usuario> obtenerUsuarios() {
         return gestorGranja.getGestorUsuarios().getUsuarios();
@@ -95,8 +88,16 @@ public class GranjaControlador { // Controlador principal que maneja las operaci
         gestorGranja.getGestorAspersores().asignarAspersorAParcela(idParcela);
     }
 
+    public void asignarAspersorEspecificoAParcela(String idAspersor, String idParcela) throws GranjaException {
+        gestorGranja.getGestorAspersores().asignarAspersorEspecificoAParcela(idAspersor, idParcela);
+    }
+
     public void asignarSensorAParcela(String idParcela) throws GranjaException {
         gestorGranja.getGestorSensores().asignarSensorAParcela(idParcela);
+    }
+
+    public void asignarSensorEspecificoAParcela(String idSensor, String idParcela) throws GranjaException {
+        gestorGranja.getGestorSensores().asignarSensorEspecificoAParcela(idSensor, idParcela);
     }
 
     public ArrayList<Cultivo> obtenerCultivosDisponibles() {

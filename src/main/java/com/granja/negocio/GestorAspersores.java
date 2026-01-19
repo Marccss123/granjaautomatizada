@@ -85,6 +85,36 @@ public class GestorAspersores {
         System.out.println("Aspersor " + aspersor.getId() + " asignado a parcela " + idParcela);
     }
 
+    public void asignarAspersorEspecificoAParcela(String idAspersor, String idParcela) throws GranjaException {
+        Parcela parcela = gestorGranja.getGestorParcelas().buscarParcela(idParcela);
+        if (parcela == null) {
+            throw new GranjaException("Parcela no encontrada: " + idParcela);
+        }
+
+        Aspersor aspersor = buscarAspersor(idAspersor);
+        if (aspersor == null) {
+            throw new GranjaException("Aspersor no encontrado: " + idAspersor);
+        }
+
+        if (aspersor.getParcela() != null) {
+            throw new GranjaException("El aspersor ya está asignado a la parcela " + aspersor.getParcela().getId());
+        }
+
+        aspersor.setParcela(parcela);
+        parcela.agregarAspersor(aspersor);
+        gestorGranja.getAspersoresInventario().remove(aspersor);
+
+        if (persistenciaService != null) {
+            try {
+                persistenciaService.guardarAspersor(aspersor);
+            } catch (Exception e) {
+                System.out.println("Error actualizando aspersor en BD: " + e.getMessage());
+            }
+        }
+
+        System.out.println("Aspersor " + idAspersor + " asignado específicamente a parcela " + idParcela);
+    }
+
     public void prenderManualmente(String idAspersor) throws GranjaException {
         Aspersor aspersor = buscarAspersor(idAspersor);
 
