@@ -36,8 +36,9 @@ public class GranjaControlador {
         return gestorGranja.getGestorUsuarios().getUsuarioActual();
     }
 
-    public void agregarUsuario(String nombre, String apellido, String email, String telefono, String rol) {
-        gestorGranja.getGestorUsuarios().agregarUsuario(nombre, apellido, email, telefono, rol);
+
+    public boolean agregarUsuario(String nombre, String apellido, String email, String telefono, String rol) {
+        return gestorGranja.getGestorUsuarios().agregarUsuario(nombre, apellido, email, telefono, rol);
     }
 
     public void cerrarSesionUsuario() {

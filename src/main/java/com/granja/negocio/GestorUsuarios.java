@@ -51,22 +51,27 @@ public class GestorUsuarios {
         agregarUsuario("María", "González", "maria.gonzalez@granja.com", "0976543210", "Supervisor");
     }
 
-    public void agregarUsuario(String nombre, String apellido, String email, String telefono, String rol) {
+    public boolean agregarUsuario(String nombre, String apellido, String email, String telefono, String rol) {
         String id = "USER_" + contadorUsuarios;
         Usuario usuario = new Usuario(id, nombre, apellido, email, telefono, rol);
-        usuarios.add(usuario);
-        contadorUsuarios++;
-
         if (operacionesCrud != null) {
             try {
-                operacionesCrud.guardarUsuario(usuario);
-                System.out.println("Usuario guardado en BD: " + usuario.getNombreCompleto());
+                if(!operacionesCrud.findByEmailActive(email)) {
+                    operacionesCrud.guardarUsuario(usuario);
+                    System.out.println("Usuario guardado en BD: " + usuario.getNombreCompleto());
+                    usuarios.add(usuario);
+                    contadorUsuarios++;
+                    return true;
+                }else {
+                    System.out.println("Este usuario ya se encuentra registrado");
+                    return false;
+                }
             } catch (Exception e) {
                 System.out.println("Error guardando usuario en BD: " + e.getMessage());
             }
         }
-
         System.out.println("Usuario registrado: " + usuario.getNombreCompleto() + " (" + id + ")");
+        return false;
     }
 
     public void seleccionarUsuarioActual(String idUsuario) throws GranjaException {

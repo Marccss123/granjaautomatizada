@@ -149,14 +149,18 @@ public class VistaPrincipal extends VerticalLayout {
         rolField.setPlaceholder("Administrador/Supervisor/Operador");
 
         Button agregarBtn = new Button("Agregar Usuario", e -> {
-            controller.agregarUsuario(
+          boolean flag =  controller.agregarUsuario(
                     nombreField.getValue(),
                     apellidoField.getValue(),
                     emailField.getValue(),
                     telefonoField.getValue(),
                     rolField.getValue()
             );
-            mostrarNotificacion("Usuario agregado exitosamente", NotificationVariant.LUMO_SUCCESS);
+          if(flag) {
+              mostrarNotificacion("Usuario agregado exitosamente", NotificationVariant.LUMO_SUCCESS);
+          }else {
+              mostrarNotificacion("Error al registrar el usuario, favor verificar si el mismo ya se encuentra registrado", NotificationVariant.LUMO_ERROR);
+          }
             nombreField.clear();
             apellidoField.clear();
             emailField.clear();
