@@ -122,10 +122,6 @@ public class GranjaControlador {
         gestorGranja.getGestorSensores().eliminarSensor(idSensor);
     }
 
-    public void mostrarLecturasSensor(String idSensor) throws GranjaException {
-        gestorGranja.getGestorSensores().mostrarLecturasSensor(idSensor);
-    }
-
 
     public ArrayList<Cultivo> obtenerCultivosDisponibles() {
         return gestorGranja.getGestorCultivos().getCultivosDisponibles();
@@ -158,19 +154,6 @@ public class GranjaControlador {
 
     public boolean registrarAspersorArduino(String puerto) {
         return gestorGranja.getGestorArduino().registrarAspersorDesdeArduino(puerto);
-    }
-
-
-    public void mostrarDispositivosArduino() {
-        List<String> dispositivos = gestorGranja.getGestorArduino().obtenerDispositivosConectados();
-        System.out.println("\n========== DISPOSITIVOS ARDUINO CONECTADOS ==========");
-        if (dispositivos.isEmpty()) {
-            System.out.println("No hay dispositivos Arduino conectados.");
-        } else {
-            for (String dispositivo : dispositivos) {
-                System.out.println("  - " + dispositivo);
-            }
-        }
     }
 
 
