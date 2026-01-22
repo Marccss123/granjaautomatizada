@@ -88,11 +88,6 @@ public class GranjaControlador {
         gestorGranja.getGestorAspersores().eliminarAspersor(idAspersor);
     }
 
-    public void mostrarHistorialAspersor(String idAspersor) throws GranjaException {
-        gestorGranja.getGestorAspersores().mostrarHistorialAspersor(idAspersor);
-    }
-
-
 
     public ArrayList<SensorHumedad> obtenerSensoresInventario() {
         return gestorGranja.getSensoresInventario();
