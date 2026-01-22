@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route("")
 public class VistaPrincipal extends VerticalLayout {
     private final GranjaControlador controller;
-    private VerticalLayout contentLayout;
+    private final VerticalLayout contentLayout;
     private HorizontalLayout userBar;
 
     @Autowired
@@ -142,35 +142,184 @@ public class VistaPrincipal extends VerticalLayout {
         }
 
         TextField nombreField = new TextField("Nombre");
+        nombreField.setPlaceholder("Ej: Juan");
+        nombreField.setPattern("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
+        nombreField.setErrorMessage("Solo se permiten letras y espacios");
+        nombreField.setRequired(true);
+        nombreField.setHelperText("Solo letras");
+
+        nombreField.addValueChangeListener(event -> {
+            String valor = event.getValue();
+            if (valor != null && !valor.isEmpty()) {
+                String valorLimpio = valor.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", "");
+                if (!valor.equals(valorLimpio)) {
+                    nombreField.setValue(valorLimpio);
+                    nombreField.setInvalid(true);
+                } else {
+                    nombreField.setInvalid(false);
+                }
+            }
+        });
+
         TextField apellidoField = new TextField("Apellido");
+        apellidoField.setPlaceholder("Ej: Pérez");
+        apellidoField.setPattern("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
+        apellidoField.setErrorMessage("Solo se permiten letras y espacios");
+        apellidoField.setRequired(true);
+        apellidoField.setHelperText("Solo letras");
+
+        apellidoField.addValueChangeListener(event -> {
+            String valor = event.getValue();
+            if (valor != null && !valor.isEmpty()) {
+                String valorLimpio = valor.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", "");
+                if (!valor.equals(valorLimpio)) {
+                    apellidoField.setValue(valorLimpio);
+                    apellidoField.setInvalid(true);
+                } else {
+                    apellidoField.setInvalid(false);
+                }
+            }
+        });
+
         TextField emailField = new TextField("Email");
+        emailField.setPlaceholder("ejemplo@correo.com");
+        emailField.setRequired(true);
+        emailField.setHelperText("Debe contener @ y .com");
+
+        emailField.addValueChangeListener(event -> {
+            String email = event.getValue();
+            if (email != null && !email.isEmpty()) {
+                boolean tieneArroba = email.contains("@");
+                boolean tieneCom = email.toLowerCase().contains(".com");
+
+                if (!tieneArroba || !tieneCom) {
+                    emailField.setInvalid(true);
+                    if (!tieneArroba && !tieneCom) {
+                        emailField.setErrorMessage("Falta @ y .com");
+                    } else if (!tieneArroba) {
+                        emailField.setErrorMessage("Falta el símbolo @");
+                    } else {
+                        emailField.setErrorMessage("Debe terminar con .com");
+                    }
+                } else {
+                    emailField.setInvalid(false);
+                    emailField.setErrorMessage("");
+                }
+            }
+        });
+
         TextField telefonoField = new TextField("Teléfono");
+        telefonoField.setPlaceholder("8091234567");
+        telefonoField.setPattern("\\d+");
+        telefonoField.setHelperText("Solo números");
+        telefonoField.setMaxLength(15);
+
+        telefonoField.addValueChangeListener(event -> {
+            String valor = event.getValue();
+            if (valor != null && !valor.isEmpty()) {
+                String valorLimpio = valor.replaceAll("[^0-9]", "");
+                if (!valor.equals(valorLimpio)) {
+                    telefonoField.setValue(valorLimpio);
+                }
+            }
+        });
+
         TextField rolField = new TextField("Rol");
         rolField.setPlaceholder("Administrador/Supervisor/Operador");
+        rolField.setRequired(true);
 
         Button agregarBtn = new Button("Agregar Usuario", e -> {
-          boolean flag =  controller.agregarUsuario(
-                    nombreField.getValue(),
-                    apellidoField.getValue(),
-                    emailField.getValue(),
-                    telefonoField.getValue(),
-                    rolField.getValue()
+            // Validar todos los campos antes de agregar
+            boolean camposValidos = true;
+            StringBuilder errores = new StringBuilder();
+
+            if (nombreField.getValue() == null || nombreField.getValue().trim().isEmpty()) {
+                errores.append("• El nombre es obligatorio\n");
+                nombreField.setInvalid(true);
+                camposValidos = false;
+            } else if (!nombreField.getValue().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+                errores.append("• El nombre solo puede contener letras\n");
+                nombreField.setInvalid(true);
+                camposValidos = false;
+            }
+
+            if (apellidoField.getValue() == null || apellidoField.getValue().trim().isEmpty()) {
+                errores.append("• El apellido es obligatorio\n");
+                apellidoField.setInvalid(true);
+                camposValidos = false;
+            } else if (!apellidoField.getValue().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+                errores.append("• El apellido solo puede contener letras\n");
+                apellidoField.setInvalid(true);
+                camposValidos = false;
+            }
+
+            String email = emailField.getValue();
+            if (email == null || email.trim().isEmpty()) {
+                errores.append("• El email es obligatorio\n");
+                emailField.setInvalid(true);
+                camposValidos = false;
+            } else {
+                if (!email.contains("@")) {
+                    errores.append("• El email debe contener @\n");
+                    emailField.setInvalid(true);
+                    camposValidos = false;
+                }
+                if (!email.toLowerCase().contains(".com")) {
+                    errores.append("• El email debe contener .com\n");
+                    emailField.setInvalid(true);
+                    camposValidos = false;
+                }
+            }
+
+            if (telefonoField.getValue() == null || telefonoField.getValue().trim().isEmpty()) {
+                errores.append("• El teléfono es obligatorio\n");
+                telefonoField.setInvalid(true);
+                camposValidos = false;
+            }
+
+            if (rolField.getValue() == null || rolField.getValue().trim().isEmpty()) {
+                errores.append("• El rol es obligatorio\n");
+                rolField.setInvalid(true);
+                camposValidos = false;
+            }
+
+            if (!camposValidos) {
+                mostrarNotificacion("Errores de validación:\n" + errores,
+                        NotificationVariant.LUMO_ERROR);
+                return;
+            }
+
+            // Si todo es válido, agregar usuario
+            boolean flag = controller.agregarUsuario(
+                    nombreField.getValue().trim(),
+                    apellidoField.getValue().trim(),
+                    emailField.getValue().trim(),
+                    telefonoField.getValue().trim(),
+                    rolField.getValue().trim()
             );
-          if(flag) {
-              mostrarNotificacion("Usuario agregado exitosamente", NotificationVariant.LUMO_SUCCESS);
-          }else {
-              mostrarNotificacion("Error al registrar el usuario, favor verificar si el mismo ya se encuentra registrado", NotificationVariant.LUMO_ERROR);
-          }
-            nombreField.clear();
-            apellidoField.clear();
-            emailField.clear();
-            telefonoField.clear();
-            rolField.clear();
-            actualizarVistaUsuarios();
+
+            if (flag) {
+                mostrarNotificacion("Usuario agregado exitosamente", NotificationVariant.LUMO_SUCCESS);
+                nombreField.clear();
+                apellidoField.clear();
+                emailField.clear();
+                telefonoField.clear();
+                rolField.clear();
+                nombreField.setInvalid(false);
+                apellidoField.setInvalid(false);
+                emailField.setInvalid(false);
+                telefonoField.setInvalid(false);
+                rolField.setInvalid(false);
+                actualizarVistaUsuarios();
+            } else {
+                mostrarNotificacion("Error al registrar el usuario, favor verificar si el mismo ya se encuentra registrado",
+                        NotificationVariant.LUMO_ERROR);
+            }
         });
         agregarBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        HorizontalLayout formLayout = new HorizontalLayout(nombreField, apellidoField, emailField, telefonoField, rolField, agregarBtn);
+        HorizontalLayout formLayout = new HorizontalLayout(nombreField, apellidoField, emailField,
+                telefonoField, rolField, agregarBtn);
         formLayout.setAlignItems(Alignment.BASELINE);
 
         Grid<Usuario> grid = new Grid<>(Usuario.class, false);
@@ -185,7 +334,8 @@ public class VistaPrincipal extends VerticalLayout {
             Button seleccionarBtn = new Button("Seleccionar", ev -> {
                 try {
                     controller.seleccionarUsuarioActual(usuario.getId());
-                    mostrarNotificacion("Usuario seleccionado: " + usuario.getNombreCompleto(), NotificationVariant.LUMO_SUCCESS);
+                    mostrarNotificacion("Usuario seleccionado: " + usuario.getNombreCompleto(),
+                            NotificationVariant.LUMO_SUCCESS);
                     actualizarBarraUsuario();
                     actualizarVistaUsuarios();
                 } catch (GranjaException ex) {
@@ -233,17 +383,15 @@ public class VistaPrincipal extends VerticalLayout {
         grid.addColumn(p -> p.getUsuarioCreador() != null ? p.getUsuarioCreador().getNombreCompleto() : "N/A").setHeader("Creado por");
 
         grid.addComponentColumn(parcela -> {
-            Button eliminarBtn = new Button("Eliminar", ev -> {
-                mostrarDialogoConfirmacion("¿Eliminar parcela " + parcela.getId() + "?", () -> {
-                    try {
-                        controller.eliminarParcela(parcela.getId());
-                        mostrarNotificacion("Parcela eliminada", NotificationVariant.LUMO_SUCCESS);
-                        actualizarGridParcelas();
-                    } catch (GranjaException ex) {
-                        mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
-                    }
-                });
-            });
+            Button eliminarBtn = new Button("Eliminar", ev -> mostrarDialogoConfirmacion("¿Eliminar parcela " + parcela.getId() + "?", () -> {
+                try {
+                    controller.eliminarParcela(parcela.getId());
+                    mostrarNotificacion("Parcela eliminada", NotificationVariant.LUMO_SUCCESS);
+                    actualizarGridParcelas();
+                } catch (GranjaException ex) {
+                    mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
+                }
+            }));
             eliminarBtn.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_SMALL);
             return eliminarBtn;
         }).setHeader("Acciones");
@@ -336,16 +484,14 @@ public class VistaPrincipal extends VerticalLayout {
             });
             encenderBtn.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_SUCCESS);
 
-            Button eliminarBtn = new Button("Eliminar", ev -> {
-                mostrarDialogoConfirmacion("¿Eliminar aspersor " + aspersor.getId() + "?", () -> {
-                    try {
-                        controller.eliminarAspersor(aspersor.getId());
-                        actualizarGridAspersores();
-                    } catch (GranjaException ex) {
-                        mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
-                    }
-                });
-            });
+            Button eliminarBtn = new Button("Eliminar", ev -> mostrarDialogoConfirmacion("¿Eliminar aspersor " + aspersor.getId() + "?", () -> {
+                try {
+                    controller.eliminarAspersor(aspersor.getId());
+                    actualizarGridAspersores();
+                } catch (GranjaException ex) {
+                    mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
+                }
+            }));
             eliminarBtn.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ERROR);
 
             actions.add(conectarBtn, encenderBtn, eliminarBtn);
@@ -430,16 +576,14 @@ public class VistaPrincipal extends VerticalLayout {
             });
             conectarBtn.addThemeVariants(ButtonVariant.LUMO_SMALL);
 
-            Button eliminarBtn = new Button("Eliminar", ev -> {
-                mostrarDialogoConfirmacion("¿Eliminar sensor " + sensor.getId() + "?", () -> {
-                    try {
-                        controller.eliminarSensor(sensor.getId());
-                        actualizarGridSensores();
-                    } catch (GranjaException ex) {
-                        mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
-                    }
-                });
-            });
+            Button eliminarBtn = new Button("Eliminar", ev -> mostrarDialogoConfirmacion("¿Eliminar sensor " + sensor.getId() + "?", () -> {
+                try {
+                    controller.eliminarSensor(sensor.getId());
+                    actualizarGridSensores();
+                } catch (GranjaException ex) {
+                    mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
+                }
+            }));
             eliminarBtn.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ERROR);
 
             actions.add(conectarBtn, eliminarBtn);
