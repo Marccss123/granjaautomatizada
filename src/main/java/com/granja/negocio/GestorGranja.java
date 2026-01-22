@@ -3,21 +3,25 @@ package com.granja.negocio;
 import com.granja.modelo.*;
 import com.granja.hardware.GestorArduino;
 import com.granja.servicio.OperacionesCrud;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 @Component
+@Getter
+@Setter
 public class GestorGranja {
     private ArrayList<Parcela> parcelas;
     private ArrayList<Aspersor> aspersoresInventario;
     private ArrayList<SensorHumedad> sensoresInventario;
-    private GestorParcelas gestorParcelas;
-    private GestorAspersores gestorAspersores;
-    private GestorSensores gestorSensores;
-    private GestorCultivos gestorCultivos;
-    private GestorArduino gestorArduino;
-    private GestorUsuarios gestorUsuarios;
+    private final GestorParcelas gestorParcelas;
+    private final GestorAspersores gestorAspersores;
+    private final GestorSensores gestorSensores;
+    private final GestorCultivos gestorCultivos;
+    private final GestorArduino gestorArduino;
+    private final GestorUsuarios gestorUsuarios;
     private int contadorIdAspersores;
     private int contadorIdSensores;
     private OperacionesCrud operacionesCrud;
@@ -49,79 +53,11 @@ public class GestorGranja {
         }
     }
 
-    public OperacionesCrud getPersistenciaService() {
-        return operacionesCrud;
-    }
-
-    public ArrayList<Parcela> getParcelas() {
-        return parcelas;
-    }
-
-    public void setParcelas(ArrayList<Parcela> parcelas) {
-        this.parcelas = parcelas;
-    }
-
-    public ArrayList<Aspersor> getAspersoresInventario() {
-        return aspersoresInventario;
-    }
-
-    public void setAspersoresInventario(ArrayList<Aspersor> aspersoresInventario) {
-        this.aspersoresInventario = aspersoresInventario;
-    }
-
-    public ArrayList<SensorHumedad> getSensoresInventario() {
-        return sensoresInventario;
-    }
-
-    public void setSensoresInventario(ArrayList<SensorHumedad> sensoresInventario) {
-        this.sensoresInventario = sensoresInventario;
-    }
-
-    public GestorParcelas getGestorParcelas() {
-        return gestorParcelas;
-    }
-
-    public GestorAspersores getGestorAspersores() {
-        return gestorAspersores;
-    }
-
-    public GestorSensores getGestorSensores() {
-        return gestorSensores;
-    }
-
-    public GestorCultivos getGestorCultivos() {
-        return gestorCultivos;
-    }
-
-    public GestorArduino getGestorArduino() {
-        return gestorArduino;
-    }
-
-    public GestorUsuarios getGestorUsuarios() {
-        return gestorUsuarios;
-    }
-
     public String getSiguienteIdAspersor() {
         return "ASPERSOR_" + (contadorIdAspersores++);
     }
 
     public String getSiguienteIdSensor() {
         return "SENSOR_" + (contadorIdSensores++);
-    }
-
-    public int getContadorIdAspersores() {
-        return contadorIdAspersores;
-    }
-
-    public void incrementarContadorAspersores() {
-        contadorIdAspersores++;
-    }
-
-    public int getContadorIdSensores() {
-        return contadorIdSensores;
-    }
-
-    public void incrementarContadorSensores() {
-        contadorIdSensores++;
     }
 }

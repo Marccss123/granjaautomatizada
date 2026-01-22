@@ -5,7 +5,7 @@ import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.*;
 
 public class GestorParcelas {
-    private GestorGranja gestorGranja;
+    private final GestorGranja gestorGranja;
     private int contadorParcelas;
     private OperacionesCrud operacionesCrud;
 
@@ -28,13 +28,13 @@ public class GestorParcelas {
             throw new GranjaException("Debe seleccionar un usuario antes de crear parcelas");
         }
 
-        double tamañoParcela = 50.0;
-        int cantidadParcelas = (int) (terrenoTotal / tamañoParcela);
-        double terrenoRestante = terrenoTotal % tamañoParcela;
+        double sizeParcela = 50.0;
+        int cantidadParcelas = (int) (terrenoTotal / sizeParcela);
+        double terrenoRestante = terrenoTotal % sizeParcela;
 
         for (int i = 0; i < cantidadParcelas; i++) {
             String idParcela = "PARCELA_" + contadorParcelas;
-            Parcela parcela = new Parcela(idParcela, tamañoParcela);
+            Parcela parcela = new Parcela(idParcela, sizeParcela);
             parcela.setUsuarioCreador(usuarioActual);
             gestorGranja.getParcelas().add(parcela);
 

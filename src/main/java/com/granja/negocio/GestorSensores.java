@@ -7,7 +7,7 @@ import com.granja.utilitario.*;
 import java.time.format.DateTimeFormatter;
 
 public class GestorSensores {
-    private GestorGranja gestorGranja;
+    private final GestorGranja gestorGranja;
     private OperacionesCrud operacionesCrud;
 
     public GestorSensores(GestorGranja gestorGranja) {

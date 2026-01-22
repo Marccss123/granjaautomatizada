@@ -1,8 +1,13 @@
 package com.granja.modelo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+@Getter
+@Setter
 public class Aspersor {
     private String id;
     private boolean conectado;
@@ -16,46 +21,6 @@ public class Aspersor {
         this.encendido = false;
         this.parcela = null;
         this.historialEncendidos = new ArrayList<>();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public boolean isConectado() {
-        return conectado;
-    }
-
-    public void setConectado(boolean conectado) {
-        this.conectado = conectado;
-    }
-
-    public boolean isEncendido() {
-        return encendido;
-    }
-
-    public void setEncendido(boolean encendido) {
-        this.encendido = encendido;
-    }
-
-    public Parcela getParcela() {
-        return parcela;
-    }
-
-    public void setParcela(Parcela parcela) {
-        this.parcela = parcela;
-    }
-
-    public ArrayList<LocalDateTime> getHistorialEncendidos() {
-        return historialEncendidos;
-    }
-
-    public void setHistorialEncendidos(ArrayList<LocalDateTime> historialEncendidos) {
-        this.historialEncendidos = historialEncendidos;
     }
 
     public void registrarEncendido() {

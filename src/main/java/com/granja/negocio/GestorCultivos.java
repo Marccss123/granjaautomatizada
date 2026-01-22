@@ -3,11 +3,14 @@ package com.granja.negocio;
 import com.granja.modelo.*;
 import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.GranjaException;
+import lombok.Getter;
+
 import java.util.ArrayList;
 
+@Getter
 public class GestorCultivos {
-    private GestorGranja gestorGranja;
-    private ArrayList<Cultivo> cultivosDisponibles;
+    private final GestorGranja gestorGranja;
+    private final ArrayList<Cultivo> cultivosDisponibles;
     private OperacionesCrud operacionesCrud;
 
     public GestorCultivos(GestorGranja gestorGranja) {
@@ -100,9 +103,5 @@ public class GestorCultivos {
             }
         }
         return null;
-    }
-
-    public ArrayList<Cultivo> getCultivosDisponibles() {
-        return cultivosDisponibles;
     }
 }

@@ -1,27 +1,16 @@
 package com.granja.utilitario;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Util {
-    private static Scanner scanner = new Scanner(System.in);
-    private static Random random = new Random();
-
-    public static String generarId(String prefijo, int contador) {
-        return prefijo + "_" + contador;
-    }
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final Random random = new Random();
 
     public static int generarHumedadProgresiva(int humedadActual) {
         int cambio = random.nextInt(11) - 5;
         int nuevaHumedad = humedadActual + cambio;
         return Math.max(0, Math.min(100, nuevaHumedad));
-    }
-
-    public static String obtenerFechaHoraActual() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.now().format(formatter);
     }
 
     public static void mostrarMenuPrincipal() {
@@ -104,9 +93,4 @@ public class Util {
         return valor;
     }
 
-    public static boolean confirmarAccion(String mensaje) {
-        System.out.print(mensaje + " (S/N): ");
-        String respuesta = scanner.nextLine().trim().toUpperCase();
-        return respuesta.equals("S");
-    }
 }

@@ -2,15 +2,18 @@ package com.granja.hardware;
 
 import com.granja.modelo.*;
 import com.granja.negocio.GestorGranja;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class GestorArduino {
-    private GestorGranja gestorGranja;
-    private Map<String, ArduinoConnector> conexionesActivas;
-    private Map<String, String> dispositivosPorPuerto;
+    private final GestorGranja gestorGranja;
+    private final Map<String, ArduinoConnector> conexionesActivas;
+    private final Map<String, String> dispositivosPorPuerto;
 
     public GestorArduino(GestorGranja gestorGranja) {
         this.gestorGranja = gestorGranja;
@@ -42,7 +45,7 @@ public class GestorArduino {
                     return nombreDispositivo;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+               log.error(e.getMessage());
             }
         }
 
@@ -57,18 +60,17 @@ public class GestorArduino {
             return false;
         }
 
-        String idSensor = nombreDispositivo;
-        SensorHumedad sensor = new SensorHumedad(idSensor);
+        SensorHumedad sensor = new SensorHumedad(nombreDispositivo);
 
         gestorGranja.getSensoresInventario().add(sensor);
-        dispositivosPorPuerto.put(puerto, idSensor);
+        dispositivosPorPuerto.put(puerto, nombreDispositivo);
 
         ArduinoConnector connector = new ArduinoConnector();
         if (connector.conectar(puerto)) {
-            conexionesActivas.put(idSensor, connector);
+            conexionesActivas.put(nombreDispositivo, connector);
             sensor.setConectado(true);
             connector.encenderLED();
-            System.out.println("Sensor registrado: " + idSensor + " en puerto " + puerto);
+            System.out.println("Sensor registrado: " + nombreDispositivo + " en puerto " + puerto);
             System.out.println("LED encendido - Sensor conectado");
             return true;
         }
@@ -84,18 +86,17 @@ public class GestorArduino {
             return false;
         }
 
-        String idAspersor = nombreDispositivo;
-        Aspersor aspersor = new Aspersor(idAspersor);
+        Aspersor aspersor = new Aspersor(nombreDispositivo);
 
         gestorGranja.getAspersoresInventario().add(aspersor);
-        dispositivosPorPuerto.put(puerto, idAspersor);
+        dispositivosPorPuerto.put(puerto, nombreDispositivo);
 
         ArduinoConnector connector = new ArduinoConnector();
         if (connector.conectar(puerto)) {
-            conexionesActivas.put(idAspersor, connector);
+            conexionesActivas.put(nombreDispositivo, connector);
             aspersor.setConectado(true);
             connector.encenderLED();
-            System.out.println("Aspersor registrado: " + idAspersor + " en puerto " + puerto);
+            System.out.println("Aspersor registrado: " + nombreDispositivo + " en puerto " + puerto);
             System.out.println("LED encendido - Aspersor conectado");
             return true;
         }
@@ -136,23 +137,6 @@ public class GestorArduino {
         return false;
     }
 
-    public void sincronizarTodosSensores() {
-        System.out.println("Sincronizando sensores con hardware...");
-
-        for (Parcela parcela : gestorGranja.getParcelas()) {
-            for (SensorHumedad sensor : parcela.getSensores()) {
-                if (conexionesActivas.containsKey(sensor.getId())) {
-                    int humedadReal = leerHumedadReal(sensor.getId());
-                    if (humedadReal >= 0) {
-                        sensor.setHumedadActual(humedadReal);
-                        sensor.realizarLectura();
-                        System.out.println(sensor.getId() + " - Humedad real: " + humedadReal + "%");
-                    }
-                }
-            }
-        }
-    }
-
     public void desconectarTodos() {
         for (ArduinoConnector connector : conexionesActivas.values()) {
             connector.apagarLED();
@@ -178,23 +162,4 @@ public class GestorArduino {
         return conexionesActivas.containsKey(idDispositivo);
     }
 
-    public void reconectarDispositivo(String idDispositivo) {
-        for (Map.Entry<String, String> entry : dispositivosPorPuerto.entrySet()) {
-            if (entry.getValue().equals(idDispositivo)) {
-                String puerto = entry.getKey();
-
-                ArduinoConnector oldConnector = conexionesActivas.get(idDispositivo);
-                if (oldConnector != null) {
-                    oldConnector.desconectar();
-                }
-
-                ArduinoConnector newConnector = new ArduinoConnector();
-                if (newConnector.conectar(puerto)) {
-                    conexionesActivas.put(idDispositivo, newConnector);
-                    System.out.println("Dispositivo " + idDispositivo + " reconectado");
-                }
-                break;
-            }
-        }
-    }
 }

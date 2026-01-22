@@ -1,10 +1,13 @@
 package com.granja.hardware;
 
 import com.fazecast.jSerialComm.SerialPort;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class ArduinoConnector {
     private SerialPort serialPort;
     private boolean conectado;
@@ -38,7 +41,7 @@ public class ArduinoConnector {
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage());
                     }
                     return true;
                 }
@@ -84,7 +87,7 @@ public class ArduinoConnector {
 
             return respuesta;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -98,9 +101,10 @@ public class ArduinoConnector {
             enviarComando("GET_HUMIDITY");
             Thread.sleep(500);
             String respuesta = leerRespuesta();
+            assert respuesta != null;
             return Integer.parseInt(respuesta.trim());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return -1;
         }
     }
@@ -116,7 +120,7 @@ public class ArduinoConnector {
             String respuesta = leerRespuesta();
             return respuesta != null && respuesta.contains("OK");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return false;
         }
     }
@@ -132,7 +136,7 @@ public class ArduinoConnector {
             String respuesta = leerRespuesta();
             return respuesta != null && respuesta.contains("OK");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return false;
         }
     }
@@ -148,7 +152,7 @@ public class ArduinoConnector {
             String respuesta = leerRespuesta();
             return respuesta != null && respuesta.contains("CONNECTED");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return false;
         }
     }
@@ -164,23 +168,8 @@ public class ArduinoConnector {
             String respuesta = leerRespuesta();
             return respuesta != null && respuesta.contains("DISCONNECTED");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return false;
-        }
-    }
-
-    public String obtenerEstadoLED() {
-        if (!conectado || serialPort == null) {
-            return "DISCONNECTED";
-        }
-
-        try {
-            enviarComando("GET_CONNECTION_STATUS");
-            Thread.sleep(500);
-            return leerRespuesta();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "ERROR";
         }
     }
 
@@ -209,7 +198,7 @@ public class ArduinoConnector {
 
             return respuesta.toString().trim();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return null;
         }
     }

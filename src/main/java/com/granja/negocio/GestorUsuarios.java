@@ -3,27 +3,25 @@ package com.granja.negocio;
 import com.granja.modelo.Usuario;
 import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.GranjaException;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 
+@Getter
+@Setter
 public class GestorUsuarios {
-    private GestorGranja gestorGranja;
     private ArrayList<Usuario> usuarios;
     private Usuario usuarioActual;
     private int contadorUsuarios;
     private OperacionesCrud operacionesCrud;
 
     public GestorUsuarios(GestorGranja gestorGranja) {
-        this.gestorGranja = gestorGranja;
         this.usuarios = new ArrayList<>();
         this.usuarioActual = null;
         this.contadorUsuarios = 1;
     }
 
-    public GestorUsuarios() {
-        this.usuarios = new ArrayList<>();
-        this.usuarioActual = null;
-        this.contadorUsuarios = 1;
-    }
 
     public void setPersistenciaService(OperacionesCrud operacionesCrud) {
         this.operacionesCrud = operacionesCrud;
@@ -95,52 +93,12 @@ public class GestorUsuarios {
 
         for (Usuario usuario : usuarios) {
             String estado = usuario.isActivo() ? "Activo" : "Inactivo";
-            System.out.println(usuario.toString() + " - " + estado);
+            System.out.println(usuario + " - " + estado);
         }
 
         if (usuarioActual != null) {
             System.out.println("\nUsuario actual: " + usuarioActual.getNombreCompleto());
         }
-    }
-
-    public void editarUsuario(String idUsuario, String nombre, String apellido, String email, String telefono, String rol) throws GranjaException {
-        Usuario usuario = buscarUsuario(idUsuario);
-        if (usuario == null) {
-            throw new GranjaException("Usuario no encontrado: " + idUsuario);
-        }
-
-        usuario.setNombre(nombre);
-        usuario.setApellido(apellido);
-        usuario.setEmail(email);
-        usuario.setTelefono(telefono);
-        usuario.setRol(rol);
-
-        System.out.println("Usuario actualizado: " + usuario.getNombreCompleto());
-    }
-
-    public void desactivarUsuario(String idUsuario) throws GranjaException {
-        Usuario usuario = buscarUsuario(idUsuario);
-        if (usuario == null) {
-            throw new GranjaException("Usuario no encontrado: " + idUsuario);
-        }
-
-        usuario.setActivo(false);
-        System.out.println("Usuario desactivado: " + usuario.getNombreCompleto());
-
-        if (usuarioActual != null && usuarioActual.getId().equals(idUsuario)) {
-            usuarioActual = null;
-            System.out.println("Se ha cerrado la sesión del usuario desactivado");
-        }
-    }
-
-    public void activarUsuario(String idUsuario) throws GranjaException {
-        Usuario usuario = buscarUsuario(idUsuario);
-        if (usuario == null) {
-            throw new GranjaException("Usuario no encontrado: " + idUsuario);
-        }
-
-        usuario.setActivo(true);
-        System.out.println("Usuario activado: " + usuario.getNombreCompleto());
     }
 
     public Usuario buscarUsuario(String idUsuario) {
@@ -152,27 +110,6 @@ public class GestorUsuarios {
         return null;
     }
 
-    public ArrayList<Usuario> getUsuarios() {
-        return usuarios;
-    }
-
-    public ArrayList<Usuario> getUsuariosActivos() {
-        ArrayList<Usuario> activos = new ArrayList<>();
-        for (Usuario usuario : usuarios) {
-            if (usuario.isActivo()) {
-                activos.add(usuario);
-            }
-        }
-        return activos;
-    }
-
-    public Usuario getUsuarioActual() {
-        return usuarioActual;
-    }
-
-    public void setUsuarioActual(Usuario usuarioActual) {
-        this.usuarioActual = usuarioActual;
-    }
 
     public void cerrarSesion() {
         if (usuarioActual != null) {

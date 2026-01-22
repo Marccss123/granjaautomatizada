@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class GestorAspersores {
-    private GestorGranja gestorGranja;
+    private final GestorGranja gestorGranja;
     private OperacionesCrud operacionesCrud;
 
     public GestorAspersores(GestorGranja gestorGranja) {

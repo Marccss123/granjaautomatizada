@@ -3,6 +3,7 @@ package com.granja.interfaz;
 import com.granja.negocio.*;
 import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,6 +18,7 @@ import java.util.Scanner;
 @ComponentScan(basePackages = "com.granja")
 @EntityScan(basePackages = "com.granja.entidad")
 @EnableJpaRepositories(basePackages = "com.granja.repositorio")
+@Slf4j
 public class VentanaComandos implements CommandLineRunner {
 
     @Autowired
@@ -35,7 +37,7 @@ public class VentanaComandos implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         System.out.println("\n========== INICIANDO SISTEMA DE CONSOLA ==========");
         System.out.println("¿Desea ejecutar el modo consola? (s/n)");
         String respuesta = scanner.nextLine().trim().toLowerCase();
@@ -157,7 +159,7 @@ public class VentanaComandos implements CommandLineRunner {
                 System.out.println("Error: " + e.getMessage());
             } catch (Exception e) {
                 System.out.println("Error inesperado: " + e.getMessage());
-                e.printStackTrace();
+               log.error(e.getMessage());
             }
         }
     }
