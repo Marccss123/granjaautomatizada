@@ -68,6 +68,23 @@ public class OperacionesCrud {
         return usuarios;
     }
 
+
+    public void actualizarUsuario(Usuario usuario) {
+        Optional<UsuarioEntidad> existente = usuarioRepositorio.findById(usuario.getId());
+        if (existente.isPresent()) {
+            UsuarioEntidad entity = existente.get();
+            entity.setNombre(usuario.getNombre());
+            entity.setApellido(usuario.getApellido());
+            entity.setEmail(usuario.getEmail());
+            entity.setTelefono(usuario.getTelefono());
+            entity.setRol(usuario.getRol());
+            entity.setActivo(usuario.isActivo());
+            usuarioRepositorio.save(entity);
+        } else {
+            throw new RuntimeException("Usuario no encontrado en la base de datos: " + usuario.getId());
+        }
+    }
+
     public void guardarParcela(Parcela parcela, Usuario usuario) {
         ParcelaEntity entity = new ParcelaEntity(parcela.getId(), parcela.getMetrosCuadrados());
         entity.setFechaCreacion(parcela.getFechaCreacion());

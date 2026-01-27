@@ -5,11 +5,13 @@ import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.GranjaException;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 
 @Getter
 @Setter
+@Slf4j
 public class GestorUsuarios {
     private ArrayList<Usuario> usuarios;
     private Usuario usuarioActual;
@@ -21,7 +23,6 @@ public class GestorUsuarios {
         this.usuarioActual = null;
         this.contadorUsuarios = 1;
     }
-
 
     public void setPersistenciaService(OperacionesCrud operacionesCrud) {
         this.operacionesCrud = operacionesCrud;
@@ -72,6 +73,38 @@ public class GestorUsuarios {
         return false;
     }
 
+
+    public boolean editarUsuario(String idUsuario, String nombre, String apellido, String email, String telefono, String rol) throws GranjaException {
+        Usuario usuario = buscarUsuario(idUsuario);
+        if (usuario == null) {
+            throw new GranjaException("Usuario no encontrado: " + idUsuario);
+        }
+        if (!usuario.getEmail().equals(email)) {
+            for (Usuario u : usuarios) {
+                if (u.getEmail().equals(email) && !u.getId().equals(idUsuario) && u.isActivo()) {
+                    throw new GranjaException("El email ya está registrado en otro usuario");
+                }
+            }
+        }
+        usuario.setNombre(nombre);
+        usuario.setApellido(apellido);
+        usuario.setEmail(email);
+        usuario.setTelefono(telefono);
+        usuario.setRol(rol);
+        if (operacionesCrud != null) {
+            try {
+                operacionesCrud.actualizarUsuario(usuario);
+                log.info("Usuario actualizado en BD: {}", usuario.getNombreCompleto());
+                return true;
+            } catch (Exception e) {
+                log.info("Error actualizando usuario en BD: {}", e.getMessage());
+                throw new GranjaException("Error al actualizar usuario: " + e.getMessage());
+            }
+        }
+        log.info("Usuario actualizado: {}", usuario.getNombreCompleto());
+        return true;
+    }
+
     public void seleccionarUsuarioActual(String idUsuario) throws GranjaException {
         Usuario usuario = buscarUsuario(idUsuario);
         if (usuario == null) {
@@ -109,7 +142,6 @@ public class GestorUsuarios {
         }
         return null;
     }
-
 
     public void cerrarSesion() {
         if (usuarioActual != null) {

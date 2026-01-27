@@ -212,7 +212,6 @@ public class VistaPrincipal extends VerticalLayout {
             }
         });
 
-        // Campo Teléfono
         TextField telefonoField = new TextField("Teléfono");
         telefonoField.setPlaceholder("8091234567");
         telefonoField.setPattern("\\d+");
@@ -326,14 +325,17 @@ public class VistaPrincipal extends VerticalLayout {
         formLayout.setAlignItems(Alignment.BASELINE);
 
         Grid<Usuario> grid = new Grid<>(Usuario.class, false);
-        grid.addColumn(Usuario::getId).setHeader("ID");
-        grid.addColumn(Usuario::getNombreCompleto).setHeader("Nombre");
-        grid.addColumn(Usuario::getEmail).setHeader("Email");
-        grid.addColumn(Usuario::getTelefono).setHeader("Teléfono");
-        grid.addColumn(Usuario::getRol).setHeader("Rol");
-        grid.addColumn(u -> u.isActivo() ? "Activo" : "Inactivo").setHeader("Estado");
+        grid.addColumn(Usuario::getId).setHeader("ID").setWidth("120px").setFlexGrow(0);
+        grid.addColumn(Usuario::getNombreCompleto).setHeader("Nombre").setAutoWidth(true);
+        grid.addColumn(Usuario::getEmail).setHeader("Email").setAutoWidth(true);
+        grid.addColumn(Usuario::getTelefono).setHeader("Teléfono").setWidth("130px").setFlexGrow(0);
+        grid.addColumn(Usuario::getRol).setHeader("Rol").setWidth("130px").setFlexGrow(0);
+        grid.addColumn(u -> u.isActivo() ? "Activo" : "Inactivo").setHeader("Estado").setWidth("100px").setFlexGrow(0);
 
         grid.addComponentColumn(usuario -> {
+            HorizontalLayout actions = new HorizontalLayout();
+            actions.setSpacing(true);
+
             Button seleccionarBtn = new Button("Seleccionar", ev -> {
                 try {
                     controller.seleccionarUsuarioActual(usuario.getId());
@@ -346,12 +348,218 @@ public class VistaPrincipal extends VerticalLayout {
                 }
             });
             seleccionarBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
-            return seleccionarBtn;
-        }).setHeader("Acción");
+
+            Button editarBtn = new Button("✏️ Editar", ev -> {
+                mostrarDialogoEditarUsuario(usuario);
+            });
+            editarBtn.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_CONTRAST);
+
+            actions.add(seleccionarBtn, editarBtn);
+            return actions;
+        }).setHeader("Acciones").setAutoWidth(true);
 
         grid.setItems(controller.obtenerUsuarios());
+        grid.setHeight("400px");
 
         contentLayout.add(subtitle, formLayout, grid);
+    }
+
+    private void mostrarDialogoEditarUsuario(Usuario usuario) {
+        Dialog dialog = new Dialog();
+        dialog.setWidth("600px");
+
+        VerticalLayout contenido = new VerticalLayout();
+        contenido.setPadding(true);
+        contenido.setSpacing(true);
+
+        com.vaadin.flow.component.html.H3 titulo = new com.vaadin.flow.component.html.H3("✏️ Editar Usuario: " + usuario.getId());
+        titulo.getStyle().set("margin", "0 0 20px 0");
+        titulo.getStyle().set("color", "#1976d2");
+
+        TextField nombreField = new TextField("Nombre");
+        nombreField.setValue(usuario.getNombre());
+        nombreField.setRequired(true);
+        nombreField.setPattern("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
+        nombreField.setErrorMessage("Solo se permiten letras y espacios");
+        nombreField.setWidthFull();
+
+        nombreField.addValueChangeListener(event -> {
+            String valor = event.getValue();
+            if (valor != null && !valor.isEmpty()) {
+                String valorLimpio = valor.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", "");
+                if (!valor.equals(valorLimpio)) {
+                    nombreField.setValue(valorLimpio);
+                    nombreField.setInvalid(true);
+                } else {
+                    nombreField.setInvalid(false);
+                }
+            }
+        });
+
+        TextField apellidoField = new TextField("Apellido");
+        apellidoField.setValue(usuario.getApellido());
+        apellidoField.setRequired(true);
+        apellidoField.setPattern("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
+        apellidoField.setErrorMessage("Solo se permiten letras y espacios");
+        apellidoField.setWidthFull();
+
+        apellidoField.addValueChangeListener(event -> {
+            String valor = event.getValue();
+            if (valor != null && !valor.isEmpty()) {
+                String valorLimpio = valor.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", "");
+                if (!valor.equals(valorLimpio)) {
+                    apellidoField.setValue(valorLimpio);
+                    apellidoField.setInvalid(true);
+                } else {
+                    apellidoField.setInvalid(false);
+                }
+            }
+        });
+
+        TextField emailField = new TextField("Email");
+        emailField.setValue(usuario.getEmail());
+        emailField.setRequired(true);
+        emailField.setHelperText("Debe contener @ y .com");
+        emailField.setWidthFull();
+
+        emailField.addValueChangeListener(event -> {
+            String email = event.getValue();
+            if (email != null && !email.isEmpty()) {
+                boolean tieneArroba = email.contains("@");
+                boolean tieneCom = email.toLowerCase().contains(".com");
+
+                if (!tieneArroba || !tieneCom) {
+                    emailField.setInvalid(true);
+                    if (!tieneArroba && !tieneCom) {
+                        emailField.setErrorMessage("Falta @ y .com");
+                    } else if (!tieneArroba) {
+                        emailField.setErrorMessage("Falta el símbolo @");
+                    } else {
+                        emailField.setErrorMessage("Debe terminar con .com");
+                    }
+                } else {
+                    emailField.setInvalid(false);
+                    emailField.setErrorMessage("");
+                }
+            }
+        });
+
+        TextField telefonoField = new TextField("Teléfono");
+        telefonoField.setValue(usuario.getTelefono());
+        telefonoField.setRequired(true);
+        telefonoField.setPattern("\\d+");
+        telefonoField.setHelperText("Solo números");
+        telefonoField.setMaxLength(15);
+        telefonoField.setWidthFull();
+
+        telefonoField.addValueChangeListener(event -> {
+            String valor = event.getValue();
+            if (valor != null && !valor.isEmpty()) {
+                String valorLimpio = valor.replaceAll("[^0-9]", "");
+                if (!valor.equals(valorLimpio)) {
+                    telefonoField.setValue(valorLimpio);
+                }
+            }
+        });
+
+        TextField rolField = new TextField("Rol");
+        rolField.setValue(usuario.getRol());
+        rolField.setRequired(true);
+        rolField.setWidthFull();
+
+        Button guardarBtn = new Button("💾 Guardar Cambios", e -> {
+            boolean camposValidos = true;
+            StringBuilder errores = new StringBuilder();
+
+            if (nombreField.getValue() == null || nombreField.getValue().trim().isEmpty()) {
+                errores.append("• El nombre es obligatorio\n");
+                nombreField.setInvalid(true);
+                camposValidos = false;
+            } else if (!nombreField.getValue().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+                errores.append("• El nombre solo puede contener letras\n");
+                nombreField.setInvalid(true);
+                camposValidos = false;
+            }
+
+            if (apellidoField.getValue() == null || apellidoField.getValue().trim().isEmpty()) {
+                errores.append("• El apellido es obligatorio\n");
+                apellidoField.setInvalid(true);
+                camposValidos = false;
+            } else if (!apellidoField.getValue().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+                errores.append("• El apellido solo puede contener letras\n");
+                apellidoField.setInvalid(true);
+                camposValidos = false;
+            }
+
+            String email = emailField.getValue();
+            if (email == null || email.trim().isEmpty()) {
+                errores.append("• El email es obligatorio\n");
+                emailField.setInvalid(true);
+                camposValidos = false;
+            } else {
+                if (!email.contains("@")) {
+                    errores.append("• El email debe contener @\n");
+                    emailField.setInvalid(true);
+                    camposValidos = false;
+                }
+                if (!email.toLowerCase().contains(".com")) {
+                    errores.append("• El email debe contener .com\n");
+                    emailField.setInvalid(true);
+                    camposValidos = false;
+                }
+            }
+
+            if (telefonoField.getValue() == null || telefonoField.getValue().trim().isEmpty()) {
+                errores.append("• El teléfono es obligatorio\n");
+                telefonoField.setInvalid(true);
+                camposValidos = false;
+            }
+
+            if (rolField.getValue() == null || rolField.getValue().trim().isEmpty()) {
+                errores.append("• El rol es obligatorio\n");
+                rolField.setInvalid(true);
+                camposValidos = false;
+            }
+
+            if (!camposValidos) {
+                mostrarNotificacion("Errores de validación:\n" + errores,
+                        NotificationVariant.LUMO_ERROR);
+                return;
+            }
+
+            try {
+                boolean exito = controller.editarUsuario(
+                        usuario.getId(),
+                        nombreField.getValue().trim(),
+                        apellidoField.getValue().trim(),
+                        emailField.getValue().trim(),
+                        telefonoField.getValue().trim(),
+                        rolField.getValue().trim()
+                );
+
+                if (exito) {
+                    mostrarNotificacion("Usuario actualizado exitosamente", NotificationVariant.LUMO_SUCCESS);
+                    dialog.close();
+                    actualizarBarraUsuario();
+                    actualizarVistaUsuarios();
+                }
+            } catch (GranjaException ex) {
+                mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
+            }
+        });
+        guardarBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+
+        Button cancelarBtn = new Button("Cancelar", e -> dialog.close());
+        cancelarBtn.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+
+        HorizontalLayout botonesLayout = new HorizontalLayout(guardarBtn, cancelarBtn);
+        botonesLayout.setJustifyContentMode(JustifyContentMode.END);
+        botonesLayout.setWidthFull();
+        botonesLayout.getStyle().set("margin-top", "20px");
+
+        contenido.add(titulo, nombreField, apellidoField, emailField, telefonoField, rolField, botonesLayout);
+        dialog.add(contenido);
+        dialog.open();
     }
 
     private void mostrarVistaParcelas() {

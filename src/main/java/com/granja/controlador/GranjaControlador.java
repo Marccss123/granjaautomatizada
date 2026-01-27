@@ -89,6 +89,10 @@ public class GranjaControlador {
     }
 
 
+    public boolean editarUsuario(String idUsuario, String nombre, String apellido, String email, String telefono, String rol) throws GranjaException {
+        return gestorGranja.getGestorUsuarios().editarUsuario(idUsuario, nombre, apellido, email, telefono, rol);
+    }
+
     public ArrayList<SensorHumedad> obtenerSensoresInventario() {
         return gestorGranja.getSensoresInventario();
     }
