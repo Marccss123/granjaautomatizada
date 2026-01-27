@@ -126,6 +126,10 @@ public class GranjaControlador {
         return gestorGranja.getGestorCultivos().getCultivosDisponibles();
     }
 
+    public boolean agregarCultivo(String nombre, int humedadMinima, int humedadMaxima, int frecuenciaRiegoHoras) throws GranjaException {
+        return gestorGranja.getGestorCultivos().agregarCultivo(nombre, humedadMinima, humedadMaxima, frecuenciaRiegoHoras);
+    }
+
     public void registrarCultivoEnParcela(String idParcela, String nombreCultivo) throws GranjaException {
         gestorGranja.getGestorCultivos().registrarCultivoEnParcela(idParcela, nombreCultivo);
     }

@@ -166,6 +166,20 @@ public class OperacionesCrud {
         }
     }
 
+    public void guardarCultivo(Cultivo cultivo) {
+        Optional<CultivoEntidad> existente = cultivoRepositorio.findByNombre(cultivo.getNombre());
+        if (existente.isPresent()) {
+            throw new RuntimeException("El cultivo ya existe: " + cultivo.getNombre());
+        }
+        CultivoEntidad entity = new CultivoEntidad(
+                cultivo.getNombre(),
+                cultivo.getHumedadMinima(),
+                cultivo.getHumedadMaxima(),
+                cultivo.getFrecuenciaRiegoHoras()
+        );
+        cultivoRepositorio.save(entity);
+    }
+
     public void actualizarCultivoParcela(String idParcela, String nombreCultivo) {
         Optional<ParcelaEntity> parcelaOpt = parcelaRepositorio.findById(idParcela);
         Optional<CultivoEntidad> cultivoOpt = cultivoRepositorio.findByNombre(nombreCultivo);

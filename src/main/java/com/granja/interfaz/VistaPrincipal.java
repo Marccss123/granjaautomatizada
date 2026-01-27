@@ -349,9 +349,7 @@ public class VistaPrincipal extends VerticalLayout {
             });
             seleccionarBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
 
-            Button editarBtn = new Button("✏️ Editar", ev -> {
-                mostrarDialogoEditarUsuario(usuario);
-            });
+            Button editarBtn = new Button("✏️ Editar", ev -> mostrarDialogoEditarUsuario(usuario));
             editarBtn.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_CONTRAST);
 
             actions.add(seleccionarBtn, editarBtn);
@@ -1087,30 +1085,169 @@ public class VistaPrincipal extends VerticalLayout {
         dialog.open();
     }
 
+
     private void mostrarVistaCultivos() {
         contentLayout.removeAll();
 
         H2 subtitle = new H2("Gestión de Cultivos");
 
+        H3 seccionAgregar = new H3("Agregar Nuevo Cultivo");
+        seccionAgregar.getStyle().set("margin-top", "0");
+
+        TextField nombreCultivoField = new TextField("Nombre del Cultivo");
+        nombreCultivoField.setPlaceholder("Ej: Arroz, Papa, etc.");
+        nombreCultivoField.setRequired(true);
+        nombreCultivoField.setWidth("200px");
+
+        NumberField humedadMinField = new NumberField("Humedad Mínima (%)");
+        humedadMinField.setPlaceholder("0-100");
+        humedadMinField.setMin(0);
+        humedadMinField.setMax(100);
+        humedadMinField.setValue(40.0);
+        humedadMinField.setWidth("180px");
+
+        NumberField humedadMaxField = new NumberField("Humedad Máxima (%)");
+        humedadMaxField.setPlaceholder("0-100");
+        humedadMaxField.setMin(0);
+        humedadMaxField.setMax(100);
+        humedadMaxField.setValue(60.0);
+        humedadMaxField.setWidth("180px");
+
+        NumberField frecuenciaField = new NumberField("Frecuencia Riego (hrs)");
+        frecuenciaField.setPlaceholder("1-999");
+        frecuenciaField.setMin(1);
+        frecuenciaField.setMax(999);
+        frecuenciaField.setValue(48.0);
+        frecuenciaField.setWidth("200px");
+
+        Button agregarCultivoBtn = new Button("➕ Agregar Cultivo", e -> {
+            boolean camposValidos = true;
+            StringBuilder errores = new StringBuilder();
+
+            if (nombreCultivoField.getValue() == null || nombreCultivoField.getValue().trim().isEmpty()) {
+                errores.append("• El nombre del cultivo es obligatorio\n");
+                nombreCultivoField.setInvalid(true);
+                camposValidos = false;
+            } else {
+                nombreCultivoField.setInvalid(false);
+            }
+
+            if (humedadMinField.getValue() == null) {
+                errores.append("• La humedad mínima es obligatoria\n");
+                humedadMinField.setInvalid(true);
+                camposValidos = false;
+            } else if (humedadMinField.getValue() < 0 || humedadMinField.getValue() > 100) {
+                errores.append("• La humedad mínima debe estar entre 0 y 100\n");
+                humedadMinField.setInvalid(true);
+                camposValidos = false;
+            } else {
+                humedadMinField.setInvalid(false);
+            }
+
+            if (humedadMaxField.getValue() == null) {
+                errores.append("• La humedad máxima es obligatoria\n");
+                humedadMaxField.setInvalid(true);
+                camposValidos = false;
+            } else if (humedadMaxField.getValue() < 0 || humedadMaxField.getValue() > 100) {
+                errores.append("• La humedad máxima debe estar entre 0 y 100\n");
+                humedadMaxField.setInvalid(true);
+                camposValidos = false;
+            } else {
+                humedadMaxField.setInvalid(false);
+            }
+
+            if (humedadMinField.getValue() != null && humedadMaxField.getValue() != null) {
+                if (humedadMinField.getValue() >= humedadMaxField.getValue()) {
+                    errores.append("• La humedad mínima debe ser menor que la máxima\n");
+                    humedadMinField.setInvalid(true);
+                    humedadMaxField.setInvalid(true);
+                    camposValidos = false;
+                }
+            }
+
+            if (frecuenciaField.getValue() == null || frecuenciaField.getValue() <= 0) {
+                errores.append("• La frecuencia de riego debe ser mayor a 0\n");
+                frecuenciaField.setInvalid(true);
+                camposValidos = false;
+            } else {
+                frecuenciaField.setInvalid(false);
+            }
+
+            if (!camposValidos) {
+                mostrarNotificacion("Errores de validación:\n" + errores, NotificationVariant.LUMO_ERROR);
+                return;
+            }
+
+            try {
+                boolean exito = controller.agregarCultivo(
+                        nombreCultivoField.getValue().trim(),
+                        humedadMinField.getValue().intValue(),
+                        humedadMaxField.getValue().intValue(),
+                        frecuenciaField.getValue().intValue()
+                );
+
+                if (exito) {
+                    mostrarNotificacion("Cultivo agregado exitosamente", NotificationVariant.LUMO_SUCCESS);
+                    nombreCultivoField.clear();
+                    humedadMinField.setValue(40.0);
+                    humedadMaxField.setValue(60.0);
+                    frecuenciaField.setValue(48.0);
+                    nombreCultivoField.setInvalid(false);
+                    humedadMinField.setInvalid(false);
+                    humedadMaxField.setInvalid(false);
+                    frecuenciaField.setInvalid(false);
+                    mostrarVistaCultivos(); // Refrescar vista
+                }
+            } catch (GranjaException ex) {
+                mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
+            }
+        });
+        agregarCultivoBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+
+        HorizontalLayout formAgregarCultivo = new HorizontalLayout(
+                nombreCultivoField, humedadMinField, humedadMaxField, frecuenciaField, agregarCultivoBtn
+        );
+        formAgregarCultivo.setAlignItems(Alignment.END);
+        formAgregarCultivo.getStyle().set("background-color", "#e8f5e9");
+        formAgregarCultivo.getStyle().set("padding", "15px");
+        formAgregarCultivo.getStyle().set("border-radius", "5px");
+        formAgregarCultivo.getStyle().set("margin-bottom", "20px");
+
+        H3 seccionLista = new H3("Cultivos Disponibles");
+
         Grid<Cultivo> gridCultivos = new Grid<>(Cultivo.class, false);
-        gridCultivos.addColumn(Cultivo::getNombre).setHeader("Nombre");
-        gridCultivos.addColumn(Cultivo::getHumedadMinima).setHeader("Humedad Mín (%)");
-        gridCultivos.addColumn(Cultivo::getHumedadMaxima).setHeader("Humedad Máx (%)");
-        gridCultivos.addColumn(Cultivo::getFrecuenciaRiegoHoras).setHeader("Frecuencia (hrs)");
+        gridCultivos.addColumn(Cultivo::getNombre).setHeader("Nombre").setAutoWidth(true);
+        gridCultivos.addColumn(Cultivo::getHumedadMinima).setHeader("Humedad Mín (%)").setWidth("150px").setFlexGrow(0);
+        gridCultivos.addColumn(Cultivo::getHumedadMaxima).setHeader("Humedad Máx (%)").setWidth("150px").setFlexGrow(0);
+        gridCultivos.addColumn(Cultivo::getFrecuenciaRiegoHoras).setHeader("Frecuencia (hrs)").setWidth("150px").setFlexGrow(0);
         gridCultivos.setItems(controller.obtenerCultivosDisponibles());
+        gridCultivos.setHeight("300px");
+
+        H3 seccionAsignar = new H3("Asignar/Cambiar Cultivo a Parcela");
 
         TextField parcelaField = new TextField("ID Parcela");
+        parcelaField.setPlaceholder("Ej: PARCELA_1");
+        parcelaField.setWidth("200px");
 
         ComboBox<Cultivo> cultivoCombo = new ComboBox<>("Cultivo");
         cultivoCombo.setItems(controller.obtenerCultivosDisponibles());
         cultivoCombo.setItemLabelGenerator(Cultivo::getNombre);
+        cultivoCombo.setPlaceholder("Seleccione un cultivo");
+        cultivoCombo.setWidth("200px");
 
-        Button asignarButton = new Button("Asignar Cultivo a Parcela", e -> {
+        Button asignarButton = new Button("Asignar Cultivo", e -> {
             try {
-                if (cultivoCombo.getValue() != null) {
-                    controller.registrarCultivoEnParcela(parcelaField.getValue(), cultivoCombo.getValue().getNombre());
-                    mostrarNotificacion("Cultivo asignado", NotificationVariant.LUMO_SUCCESS);
+                if (cultivoCombo.getValue() != null && !parcelaField.getValue().trim().isEmpty()) {
+                    controller.registrarCultivoEnParcela(
+                            parcelaField.getValue().trim(),
+                            cultivoCombo.getValue().getNombre()
+                    );
+                    mostrarNotificacion("Cultivo asignado exitosamente", NotificationVariant.LUMO_SUCCESS);
+                    parcelaField.clear();
+                    cultivoCombo.clear();
                     actualizarGridParcelas();
+                } else {
+                    mostrarNotificacion("Debe ingresar ID de parcela y seleccionar cultivo", NotificationVariant.LUMO_ERROR);
                 }
             } catch (GranjaException ex) {
                 mostrarNotificacion("Error: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
@@ -1120,9 +1257,14 @@ public class VistaPrincipal extends VerticalLayout {
 
         Button cambiarButton = new Button("Cambiar Cultivo", e -> {
             try {
-                if (cultivoCombo.getValue() != null && !parcelaField.getValue().isEmpty()) {
-                    controller.cambiarCultivoParcela(parcelaField.getValue(), cultivoCombo.getValue().getNombre());
+                if (cultivoCombo.getValue() != null && !parcelaField.getValue().trim().isEmpty()) {
+                    controller.cambiarCultivoParcela(
+                            parcelaField.getValue().trim(),
+                            cultivoCombo.getValue().getNombre()
+                    );
                     mostrarNotificacion("Cultivo cambiado exitosamente", NotificationVariant.LUMO_SUCCESS);
+                    parcelaField.clear();
+                    cultivoCombo.clear();
                     actualizarGridParcelas();
                 } else {
                     mostrarNotificacion("Debe ingresar ID de parcela y seleccionar cultivo", NotificationVariant.LUMO_ERROR);
@@ -1133,11 +1275,24 @@ public class VistaPrincipal extends VerticalLayout {
         });
         cambiarButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
 
-        HorizontalLayout formLayout = new HorizontalLayout(parcelaField, cultivoCombo, asignarButton, cambiarButton);
-        formLayout.setAlignItems(Alignment.BASELINE);
+        HorizontalLayout formAsignarCultivo = new HorizontalLayout(
+                parcelaField, cultivoCombo, asignarButton, cambiarButton
+        );
+        formAsignarCultivo.setAlignItems(Alignment.BASELINE);
+        formAsignarCultivo.getStyle().set("background-color", "#e3f2fd");
+        formAsignarCultivo.getStyle().set("padding", "15px");
+        formAsignarCultivo.getStyle().set("border-radius", "5px");
+        formAsignarCultivo.getStyle().set("margin-bottom", "20px");
 
-        contentLayout.add(subtitle, new H2("Cultivos Disponibles"), gridCultivos,
-                new H2("Asignar/Cambiar Cultivo"), formLayout);
+        contentLayout.add(
+                subtitle,
+                seccionAgregar,
+                formAgregarCultivo,
+                seccionLista,
+                gridCultivos,
+                seccionAsignar,
+                formAsignarCultivo
+        );
     }
 
     private void mostrarVistaRiego() {
